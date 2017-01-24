@@ -1,10 +1,45 @@
 apply plugin: 'java'
+apply plugin: 'war'
+//apply plugin: 'jetty'
+apply plugin: 'eclipse'
+apply plugin: 'tomcat'
 
 version = 0.1
 sourceCompatibility = 1.7
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'com.manning.gia.todo.ToDoApp'
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    providedCompile 'javax.servlet:servlet-api:2.5'
+    runtime 'javax.servlet:jstl:1.1.2'
+    def tomcatVersion = '7.0.11'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+           "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
+    compile group: 'javax.servlet', name: 'jstl', version: '1.2'
+}
+
+webAppDirName = 'webfiles'
+
+war {
+    from 'static'
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+ 
+    dependencies {
+        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.0'
     }
 }
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '3.0'
+}
+
